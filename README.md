@@ -28,6 +28,6 @@ The Learning Management System (LMS) is designed to facilitate the management an
 4. Users submit assessments (Assessment_Submission)
 
 ## Author
-- Vilas K R
-- GitHub Username: vilas-kr
+Vilas K R
+GitHub Username : vilas-kr
 
