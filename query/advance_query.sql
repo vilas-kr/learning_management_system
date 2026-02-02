@@ -2,16 +2,17 @@
 
 USE lms_db;
 
-/*
+/*------------------------------------------------------------------------------------------
 11 For each course, calculate:
 	Total number of enrolled users
 	Total number of lessons
 	Average lesson duration
+
 	why : To get all the statistics related to course
 	assumption : Each course has at least one lesson and one enrollment
 	behaviour : Join course with enrollment to get total enrollments and join with lesson to 
 		get total lessons and average duration
-*/
+-------------------------------------------------------------------------------------------*/
 SELECT c.course_id,
 	e.total_enrollments AS total_enrollments,
 	l.avg_duration AS avg_duration
@@ -38,12 +39,13 @@ ON c.course_id = l.course_id;
 GO
 
 
-/*
+/*--------------------------------------------------------------------------------------------------------------------
  12 Identify the top three most active users based on total activity count
+
 	why : To find users with highest engagement
 	assumption : There are users with varying levels of activity
 	behaviour : Group user activity by user_id and count total activities, then order by count desc and limit to top 3
-*/
+----------------------------------------------------------------------------------------------------------------------*/
 
 SELECT TOP(3) user_id, COUNT(*) AS total_activity
 FROM lms.user_activity
@@ -52,13 +54,14 @@ ORDER BY COUNT(*) DESC;
 GO
 
 
-/*
+/*---------------------------------------------------------------------------------------------------------------------------
  13 Calculate course completion percentage per user based on lesson activity
+
     why : To measure user progress in each course
 	assumption : Completion is based on lessons accessed by the user
 	behaviour : Join enrollment with users, course, lesson and user activity to calculate total lessons and completed lessons,
 		then compute completion percentage
-*/
+------------------------------------------------------------------------------------------------------------------------------*/
 
 SELECT
     u.user_id,
@@ -89,12 +92,13 @@ ORDER BY c.course_id DESC;
 GO
 
 
-/*
+/*------------------------------------------------------------------------------------------------------------------------
  14 Find users whose average assessment score is higher than the course average
+
     why : To identify enrolled users performing above average
 	assumption : Each course have multiple assessments and users have submitted assessments
 	behaviour : Calculate course average scores and user average scores, then filter users with avg score above course avg
-*/
+--------------------------------------------------------------------------------------------------------------------------*/
 WITH course_average AS (
 	SELECT c.course_id, AVG(ass.obtained_marks) AS course_avg_score
 	FROM lms.course AS c
@@ -119,12 +123,13 @@ WHERE ua.avg_score > ca.course_avg_score;
 GO
 
 
-/*
+/*----------------------------------------------------------------------------------------------------------------------
  15 List courses where lessons are frequently accessed but assessments are never attempted
+
 	why : To identify courses where users are engaged with lessons but not completing assessments
 	assumption : There maight be any course which has no assessments submitions
 	behaviour : Left join with courses having lessons accessed but no assessment submissions
-*/
+------------------------------------------------------------------------------------------------------------------------*/
 WITH course_lesson AS (
 	SELECT DISTINCT course_id
 	FROM lms.user_activity
@@ -144,13 +149,14 @@ WHERE ass.assessment_id IS NULL;
 GO
 
 
-/*
+/*------------------------------------------------------------------------------------------------------------------------
  16 Rank users within each course based on their total assessment score
+
 	why : To identify only the courses which has assessments and assessment submitions
 	assumption : A course have many assessments and users have submitted assessments
 	behaviour : Inner join with assessment and assessment submittion and group by 
 		course and user to assign rank baseed on the course total marks
-*/
+--------------------------------------------------------------------------------------------------------------------------*/
 
 SELECT c.course_id, 
 	   ass.user_id, 
@@ -168,12 +174,13 @@ GROUP BY c.course_id, ass.user_id;
 GO
 
 
-/*
+/*------------------------------------------------------------------------------------------------------------------------
  17 Identify the first lesson accessed by each user for every course
+
 	why : To identify the lessons with user activity
 	assumption : There maight be a lesson with no user activity
 	behaviour : Inner join the lesson with user_activity and filter lesson order is 1 
-*/
+--------------------------------------------------------------------------------------------------------------------------*/
 SELECT ua.user_id, l.course_id, l.lesson_id
 FROM lms.lesson AS l
 INNER JOIN lms.user_activity AS ua 
@@ -181,12 +188,13 @@ INNER JOIN lms.user_activity AS ua
 WHERE l.lesson_order = 1;
 GO
 
-/*
+/*------------------------------------------------------------------------------------------------------------------------
  18 Find users with activity recorded on at least five consecutive days
+
 	why : To identify users with consistent engagement over a period of time
 	assumption : There might be some user with no activity or only one day of activity
 	behaviour : Identify users with at least 5 consecutive days of activity
-*/
+--------------------------------------------------------------------------------------------------------------------------*/
 WITH user_days AS (
     SELECT 
         user_id,
@@ -208,12 +216,13 @@ HAVING COUNT(*) >= 5;
 GO
 
 
-/*
+/*--------------------------------------------------------------------------------------------------------------------------
  19 Retrieve users who enrolled in a course but never submitted any assessment
+
 	why : To identify enrolled users who did not attempt any assessments
 	assumption : Some enrolled users may not have submitted any assessments
 	behaviour : Left join enrollment with assessment and assessment_submit to filter users with no submissions
-*/
+----------------------------------------------------------------------------------------------------------------------------*/
 
 SELECT e.user_id, e.course_id
 FROM lms.enrollment AS e
@@ -226,12 +235,13 @@ WHERE ass.assessment_id IS NULL;
 GO
 
 
-/*
+/*---------------------------------------------------------------------------------------------------------------------------
  20 List courses where every enrolled user has submitted at least one assessment
+
 	why : To identify courses where all enrolled users have completed at least one assessment
 	assumption : Some courses may have no enrolled users or some enrolled users may not have submitted any assessments
 	behaviour : Find courses where all enrolled users have at least one assessment submission
-*/
+-----------------------------------------------------------------------------------------------------------------------------*/
 SELECT c.course_id
 FROM lms.course AS c
 WHERE EXISTS (
