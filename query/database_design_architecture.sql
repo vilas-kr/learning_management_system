@@ -72,6 +72,9 @@ GO
 
 /*--------------------------------------------------------------------------------------------------
  4. Design a reporting-friendly schema for analytics dashboards.
+
+    Behivour: Create a summary table 'analytics_user_course_summary' to store aggregated user activity 
+        data for reporting.
 ----------------------------------------------------------------------------------------------------*/
 CREATE TABLE lms.analytics_user_course_summary (
     user_id CHAR(9) NOT NULL,

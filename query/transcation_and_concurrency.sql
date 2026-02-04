@@ -74,10 +74,10 @@ GO
 --      due to another transaction inserting or deleting rows.
 -- * This can affect analytics queries that rely on consistent data sets.
 -- * To prevent phantom reads, use SERIALIZABLE isolation level or appropriate locking mechanisms.
-/*
-Isolation Level	    Lock Type
-READ COMMITTED	    Row locks
-REPEATABLE READ	    Row + shared locks
-SERIALIZABLE        Key-range locks
-TABLOCK hint	    Table lock
-*/
+-- Example of setting SERIALIZABLE isolation level for analytics query
+
+-- Isolation Level	    Lock Type
+-- READ COMMITTED	    Row locks
+-- REPEATABLE READ	    Row + shared locks
+-- SERIALIZABLE         Key-range locks
+-- TABLOCK hint	        Table lock

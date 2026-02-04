@@ -12,7 +12,7 @@ USE lms_db;
 GO
 
 /*------------------------------------------------------------------------------------------
- 1 Propose constraints to ensure a user cannot submit the same assessment more than once.    
+ 1 Propose constraints to ensure a user cannot submit the same assessment more than once.
 --------------------------------------------------------------------------------------------*/
 ALTER TABLE lms.assessment_submit
 ADD CONSTRAINT uq_user_assessment_submit UNIQUE (user_id, assessment_id);
@@ -45,6 +45,7 @@ END;
 GO  
 -- Test the trigger
 INSERT INTO lms.assessment_submit VALUES ('4','USER00002',99, getdate());
+
 /*------------------------------------------------------------------------------------------
  3 Prevent users from enrolling in courses that have no lessons.
 --------------------------------------------------------------------------------------------*/
