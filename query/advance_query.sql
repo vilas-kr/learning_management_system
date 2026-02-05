@@ -23,7 +23,7 @@ INNER JOIN (
 	GROUP BY course_id ) AS e
 ON c.course_id = e.course_id
 INNER JOIN (
-	SELECT lms.course_id,
+	SELECT course_id,
 		COUNT(*) AS total_lessons,
 		CAST(
 			DATEADD(SECOND,
